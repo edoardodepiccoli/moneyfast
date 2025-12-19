@@ -1,0 +1,54 @@
+<% 
+  processed_transactions = user.transactions.processed
+  monthly_cashflow = processed_transactions
+    .group_by { |t| t.date.beginning_of_month }
+    .transform_values { |transactions| transactions.sum(&:amount) }
+    .sort_by { |month, _| month }
+    .reverse
+    .to_h
+  
+  total_cashflow = processed_transactions.sum(&:amount)
+%>
+
+<%= turbo_frame_tag "cashflow_card" do %>
+<div class="card bg-base-200 border border-base-300 mb-4">
+  <div class="card-body">
+    <h2 class="card-title text-base-content">Cashflow Overview</h2>
+    
+    <div class="mt-4">
+      <div class="flex items-baseline gap-2 mb-6">
+        <span class="text-3xl font-bold <%= total_cashflow >= 0 ? 'text-success' : 'text-error' %>">
+          <%= number_to_currency(total_cashflow, unit: "€") %>
+        </span>
+        <span class="text-sm text-base-content/60">Total Cashflow</span>
+      </div>
+
+      <% if monthly_cashflow.any? %>
+        <% max_amount = monthly_cashflow.values.map(&:abs).max %>
+        <div class="space-y-3">
+          <% monthly_cashflow.each do |month, amount| %>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-base-content/70 flex-shrink-0">
+                <%= month.strftime("%b %Y") %>
+              </div>
+              <div class="flex-1 relative h-8 bg-base-300 rounded overflow-hidden">
+                <div 
+                  class="h-full <%= amount >= 0 ? 'bg-success' : 'bg-error' %> rounded transition-all duration-500"
+                  style="width: <%= max_amount > 0 ? (amount.abs / max_amount * 100) : 0 %>%"
+                ></div>
+              </div>
+              <div class="w-24 text-right flex-shrink-0">
+                <span class="text-xs font-semibold <%= amount >= 0 ? 'text-success' : 'text-error' %>">
+                  <%= number_to_currency(amount, unit: "€") %>
+                </span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-base-content/60 italic">No transactions yet</p>
+      <% end %>
+    </div>
+  </div>
+</div>
+<% end %>
