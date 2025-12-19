@@ -3,6 +3,17 @@ class TransactionsController < ApplicationController
   def index
     @transactions = current_user.transactions.recent
     @new_transaction = current_user.transactions.build
+
+    # Calculate monthly cashflow
+    processed_transactions = current_user.transactions.processed
+    @monthly_cashflow = processed_transactions
+      .group_by { |t| t.date.beginning_of_month }
+      .transform_values { |transactions| transactions.sum(&:amount) }
+      .sort_by { |month, _| month }
+      .reverse
+      .to_h
+
+    @total_cashflow = processed_transactions.sum(&:amount)
   end
 
   def create
