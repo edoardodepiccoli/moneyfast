@@ -4,14 +4,12 @@ class ProcessTransactionJob < ApplicationJob
   def perform(transaction_id)
     transaction = Transaction.find(transaction_id)
 
-    Rails.logger.info "Processing transaction #{transaction.id}"
-
-    sleep 3
+    parsed_data = OpenaiParserService.new(transaction.raw_input).parse
 
     transaction.update!(
-      amount: 15.0,
-      description: "mock description",
-      date: Date.today,
+      amount: parsed_data["amount"],
+      description: parsed_data["description"],
+      date: parsed_data["date"],
       status: :processed
     )
   end
