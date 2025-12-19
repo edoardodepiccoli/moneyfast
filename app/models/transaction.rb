@@ -10,6 +10,7 @@ class Transaction < ApplicationRecord
 
   after_create_commit -> { broadcast_prepend_later_to [ user, :transactions ], target: "transactions_list" }
   after_update_commit -> { broadcast_replace_later_to [ user, :transactions ] }
+  after_destroy_commit -> { broadcast_remove_to [ user, :transactions ] }
 
   scope :recent, -> { order(created_at: :desc) }
 end

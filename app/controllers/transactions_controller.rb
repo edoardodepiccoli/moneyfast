@@ -14,8 +14,16 @@ class TransactionsController < ApplicationController
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to transactions_path }
       end
+    end
+  end
+
+  def destroy
+    @transaction = current_user.transactions.find(params[:id])
+    @transaction.destroy
+
+    respond_to do |format|
+      format.turbo_stream
     end
   end
 

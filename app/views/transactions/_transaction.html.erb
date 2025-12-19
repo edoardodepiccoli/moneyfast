@@ -6,6 +6,7 @@
       <strong><%= number_to_currency(transaction.amount, unit: "€") %></strong>
       <span><%= transaction.description %></span>
       <span><%= transaction.date %></span>
+      <%= button_to "Delete", transaction_path(transaction), method: :delete %>
     <% end %>
   </div>
 <% end %>
