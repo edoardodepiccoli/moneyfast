@@ -1,7 +1,7 @@
 class OpenaiParserService
   def initialize(raw_input)
     @raw_input = raw_input
-    @client = OpenAI::Client.new
+    @client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"] || ENV.fetch("OPENAI_API_KEY"))
   end
 
   def parse
