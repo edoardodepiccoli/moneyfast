@@ -1,0 +1,12 @@
+<%= turbo_stream_from current_user, :transactions %>
+
+<div data-controller="form-reset">
+  <%= form_with model: @new_transaction, data: { action: "turbo:submit-end->form-reset#clear" } do |f| %>
+    <%= f.text_field :raw_input, placeholder: "e.g. spent 2 euros for coffee" %>
+    <%= f.submit "Add Transaction" %>
+  <% end %>
+</div>
+
+<div id="transactions_list">
+  <%= render @transactions %>
+</div>

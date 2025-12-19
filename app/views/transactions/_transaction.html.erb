@@ -1,0 +1,11 @@
+<%= turbo_frame_tag dom_id(transaction) do %>
+  <div class="transaction-row <%= 'opacity-50 italic' if transaction.pending? %>">
+    <% if transaction.pending? %>
+      <span>Processing: "<%= transaction.raw_input %>"...</span>
+    <% else %>
+      <strong><%= number_to_currency(transaction.amount, unit: "€") %></strong>
+      <span><%= transaction.description %></span>
+      <span><%= transaction.date %></span>
+    <% end %>
+  </div>
+<% end %>
