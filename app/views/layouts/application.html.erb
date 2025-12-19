@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="forest">
   <head>
     <title><%= content_for(:title) || "Moneyfast" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -23,11 +23,12 @@
 
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
   </head>
 
   <body>
     <div class="max-w-md mx-auto min-h-screen bg-base-100">
-      <div class="navbar bg-base-100 shadow-lg">
+      <div class="navbar bg-base-200 border-b border-base-300">
         <div class="flex-1">
           <a class="btn btn-ghost text-xl">MoneyFast</a>
         </div>
@@ -44,7 +45,7 @@
         <div data-controller="flash" class="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center gap-2 p-4 pointer-events-none">
           <% flash.each do |type, message| %>
             <div 
-              class="alert alert-<%= type == 'notice' ? 'success' : type == 'alert' ? 'error' : 'info' %> shadow-lg pointer-events-auto transform translate-y-full transition-transform duration-100 ease-in-out max-w-md w-full"
+              class="alert alert-<%= type == 'notice' ? 'success' : type == 'alert' ? 'error' : 'info' %> border pointer-events-auto transform translate-y-full transition-transform duration-100 ease-in-out max-w-md w-full"
               data-flash-target="message"
               data-flash-type="<%= type %>"
             >

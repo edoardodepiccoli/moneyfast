@@ -12,5 +12,5 @@ class Transaction < ApplicationRecord
   after_update_commit -> { broadcast_replace_later_to [ user, :transactions ] }
   after_destroy_commit -> { broadcast_remove_to [ user, :transactions ] }
 
-  scope :recent, -> { order(created_at: :desc) }
+  scope :recent, -> { order(date: :desc) }
 end

@@ -1,12 +1,42 @@
 <%= turbo_frame_tag dom_id(transaction) do %>
-  <div class="transaction-row <%= 'opacity-50 italic' if transaction.pending? %>">
-    <% if transaction.pending? %>
-      <span>Processing: "<%= transaction.raw_input %>"...</span>
-    <% else %>
-      <strong><%= number_to_currency(transaction.amount, unit: "€") %></strong>
-      <span><%= transaction.description %></span>
-      <span><%= transaction.date %></span>
-      <%= button_to "Delete", transaction_path(transaction), method: :delete %>
-    <% end %>
+  <div class="card <%= transaction.pending? ? 'bg-warning/10 border border-warning/30' : 'bg-base-200 border border-base-300' %>">
+    <div class="card-body p-4">
+      <% if transaction.pending? %>
+        <div class="flex items-center gap-3">
+          <span class="loading loading-spinner loading-sm text-warning"></span>
+          <div class="flex-1">
+            <p class="text-sm italic text-base-content/70">
+              Processing: "<%= transaction.raw_input %>"...
+            </p>
+          </div>
+        </div>
+      <% else %>
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 mb-1">
+              <span class="text-2xl font-bold <%= transaction.amount < 0 ? 'text-error' : 'text-success' %>">
+                <%= number_to_currency(transaction.amount, unit: "€") %>
+              </span>
+            </div>
+            <p class="text-base font-medium text-base-content break-words">
+              <%= transaction.description %>
+            </p>
+            <p class="text-sm text-base-content/60">
+              <%= transaction.date %>
+            </p>
+          </div>
+          <div class="flex-shrink-0">
+            <%= button_to transaction_path(transaction), 
+                method: :delete, 
+                class: "btn btn-sm btn-error btn-circle",
+                title: "Delete transaction" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
   </div>
 <% end %>
