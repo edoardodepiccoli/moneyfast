@@ -7,7 +7,7 @@ class OpenaiParserService
   def parse
     response = @client.chat(
       parameters: {
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: @raw_input }
@@ -27,12 +27,17 @@ class OpenaiParserService
 
   def system_prompt
     <<~TEXT
-      You are a financial assistant.
+      parse the user's input into JSON with these keys:
 
-      Parse the user's input into JSON with these keys:
-      - "amount": (float, positive or negative, default to negative if not specified that it's a positive amount)
-      - "description": (string, meaningful description for the transaction specified in the user message below written in the user's language, max 255 characters, properly capitalized)
+      - "amount"
+      - "description"
       - "date": (string YYYY-MM-DD). If no date is provided, use today's date. Today is #{Date.today}.
+
+      the amount should be a float. it should be negative if the user is spending money, positive if the user is receiving money.
+      the description should be a string. it should be a concise and meaningful description for the transaction written in the user's original language. write it all lowercase. rewrite it better.
+      the date should be a string in the format YYYY-MM-DD. if no date is provided, use today's date. today is #{Date.today}.
+
+      use the user's input to gain insights on the transaction amount, date and description.
     TEXT
   end
 end
