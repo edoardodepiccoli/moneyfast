@@ -1,24 +1,16 @@
-# README
+app idea
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+modern rails 8 + hotwire for real time stuff (turbo) and js (stimulus)
+sqlite for db (default)
 
-Things you may want to cover:
+transactions tracker where user creates transactions using natural language
 
-* Ruby version
+- user lands on transactions index
+- user types transaction in the form "spent 15 euros for coffee"
+- user sees app is processing (new skeleton row appended marked as loading)
+- new transaction form is free to use once again
+- app starts background job and makes chatgpt process the input to create a transaction
+- app creates transaction and user sees transaction appear magically
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+each user has multiple transactions and a transaction belongs to just one user
+a transaction is composed of a date, amount and description
