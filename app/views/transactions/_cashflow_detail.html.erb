@@ -37,7 +37,8 @@
         </div>
 
         <% if monthly_cashflow.any? %>
-          <% max_amount = monthly_cashflow.values.map(&:abs).max %>
+          <% amounts = monthly_cashflow.values.map(&:abs).sort.reverse %>
+          <% max_amount = amounts.size > 1 && amounts[0] > amounts[1] * 2 ? amounts[1] * 2 : amounts[0] %>
           <div class="space-y-3 mt-4">
             <% monthly_cashflow.each do |month, amount| %>
               <% month_data = monthly_breakdown[month] %>
