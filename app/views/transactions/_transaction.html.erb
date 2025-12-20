@@ -1,5 +1,15 @@
 <%= turbo_frame_tag dom_id(transaction) do %>
-  <div class="card <%= transaction.pending? ? 'bg-warning/10 border border-warning/30' : 'bg-base-200 border border-base-300' %> p-4">
+  <% 
+    is_scheduled = transaction.processed? && transaction.date > Date.today
+    card_classes = if transaction.pending?
+      'bg-warning/10 border border-warning/30'
+    elsif is_scheduled
+      'bg-warning/20 border border-warning/40'
+    else
+      'bg-base-200 border border-base-300'
+    end
+  %>
+  <div class="card <%= card_classes %> p-4">
     <div class="card-body p-0">
       <% if transaction.pending? %>
         <div class="flex items-center gap-3">

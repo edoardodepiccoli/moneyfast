@@ -1,5 +1,8 @@
 <%= turbo_frame_tag dom_id(transaction) do %>
-  <div class="hover:bg-base-100/50 transition-colors [&:last-child]:border-b-0">
+  <% 
+    is_scheduled = transaction.processed? && transaction.date > Date.today
+  %>
+  <div class="[&:last-child]:border-b-0">
     <% if transaction.pending? %>
       <div class="flex items-center gap-2 border-b border-base-300 py-2 px-3">
         <span class="loading loading-spinner loading-xs text-warning"></span>
@@ -8,7 +11,7 @@
         </p>
       </div>
     <% else %>
-      <div class="flex items-center gap-4 border-b border-base-content/30 py-2 px-3">
+      <div class="flex items-center gap-4 border-b <%= is_scheduled ? 'border-warning/40' : 'border-base-content/30' %> py-2 px-3 <%= is_scheduled ? 'bg-warning/30' : '' %>">
         <div class="flex-shrink-0 w-24">
           <div class="text-sm font-semibold <%= transaction.amount < 0 ? 'text-error' : 'text-success' %>">
             <%= number_to_currency(transaction.amount, unit: "€") %>
