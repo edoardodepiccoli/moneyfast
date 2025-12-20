@@ -1,10 +1,14 @@
 <%= turbo_stream_from current_user, :transactions %>
 <%= turbo_stream_from current_user, :cashflow_summary %>
 
-<div class="p-4 space-y-4">
-  <%= render "transactions/cashflow_summary", user: current_user %>
+<div class="p-4 flex flex-col gap-4">
+  <div>
+    <%= render "transactions/cashflow_summary", user: current_user %>
+  </div>
 
-  <%= render "transactions/form", new_transaction: @new_transaction %>
+  <div>
+    <%= render "transactions/form", new_transaction: @new_transaction %>
+  </div>
 
   <div class="flex items-center gap-2">
     <p class="text-sm text-base-content/60">Want to import or export your transactions?</p>
@@ -16,7 +20,7 @@
   </div>
 
   <% if @total_count > 10 %>
-    <div class="flex justify-center mt-4">
+    <div class="flex justify-center">
       <%= link_to "View All Transactions (#{@total_count} total)", transactions_path, class: "btn btn-outline btn-sm" %>
     </div>
   <% end %>

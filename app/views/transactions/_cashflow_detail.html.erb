@@ -11,43 +11,140 @@
 %>
 
 <%= turbo_frame_tag "cashflow_card" do %>
-<div class="card bg-base-200 border border-base-300 mb-4">
-  <div class="card-body">
-    <h2 class="card-title text-base-content">Cashflow Overview</h2>
-    
-    <div>
-      <div class="flex items-baseline gap-2 mb-6">
-        <span class="text-3xl font-bold <%= total_cashflow >= 0 ? 'text-success' : 'text-error' %>">
-          <%= number_to_currency(total_cashflow, unit: "€") %>
-        </span>
-        <span class="text-sm text-base-content/60">Total Cashflow</span>
-      </div>
-
-      <% if monthly_cashflow.any? %>
-        <% max_amount = monthly_cashflow.values.map(&:abs).max %>
-        <div class="space-y-3">
-          <% monthly_cashflow.each do |month, amount| %>
-            <div class="flex items-center gap-3">
-              <div class="w-20 text-xs text-base-content/70 flex-shrink-0">
-                <%= month.strftime("%b %Y") %>
-              </div>
-              <div class="flex-1 relative h-8 bg-base-300 rounded overflow-hidden">
-                <div 
-                  class="h-full <%= amount >= 0 ? 'bg-success' : 'bg-error' %> rounded transition-all duration-500"
-                  style="width: <%= max_amount > 0 ? (amount.abs / max_amount * 100) : 0 %>%"
-                ></div>
-              </div>
-              <div class="w-24 text-right flex-shrink-0">
-                <span class="text-xs font-semibold <%= amount >= 0 ? 'text-success' : 'text-error' %>">
-                  <%= number_to_currency(amount, unit: "€") %>
-                </span>
-              </div>
-            </div>
-          <% end %>
+<div class="flex flex-col gap-4">
+  <div class="card bg-base-200 border border-base-300 p-4">
+    <div class="card-body p-0">
+      <h2 class="card-title text-base-content">Cashflow Overview</h2>
+      
+      <div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-bold <%= total_cashflow >= 0 ? 'text-success' : 'text-error' %>">
+            <%= number_to_currency(total_cashflow, unit: "€") %>
+          </span>
+          <span class="text-sm text-base-content/60">Total Cashflow</span>
         </div>
-      <% else %>
-        <p class="text-sm text-base-content/60 italic">No transactions yet</p>
-      <% end %>
+
+        <% if monthly_cashflow.any? %>
+          <% max_amount = monthly_cashflow.values.map(&:abs).max %>
+          <div class="space-y-3 mt-4">
+            <% monthly_cashflow.each do |month, amount| %>
+              <div class="flex items-center gap-3">
+                <div class="w-20 text-xs text-base-content/70 flex-shrink-0">
+                  <%= month.strftime("%b %Y") %>
+                </div>
+                <div class="flex-1 relative h-8 bg-base-300 rounded overflow-hidden">
+                  <div 
+                    class="h-full <%= amount >= 0 ? 'bg-success' : 'bg-error' %> rounded transition-all duration-500"
+                    style="width: <%= max_amount > 0 ? (amount.abs / max_amount * 100) : 0 %>%"
+                  ></div>
+                </div>
+                <div class="w-24 text-right flex-shrink-0">
+                  <span class="text-xs font-semibold <%= amount >= 0 ? 'text-success' : 'text-error' %>">
+                    <%= number_to_currency(amount, unit: "€") %>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-base-content/60 italic">No transactions yet</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-200 border border-base-300 p-4">
+    <div class="card-body p-0">
+      <h2 class="card-title text-base-content">Monthly Breakdown</h2>
+      
+      <div>
+        <% 
+          monthly_breakdown = processed_transactions
+            .group_by { |t| t.date.beginning_of_month }
+            .transform_values do |transactions|
+              {
+                ins: transactions.select { |t| t.amount > 0 }.sum(&:amount),
+                outs: transactions.select { |t| t.amount < 0 }.sum(&:amount),
+                count: transactions.count
+              }
+            end
+            .sort_by { |month, _| month }
+            .reverse
+            .to_h
+        %>
+
+        <% if monthly_breakdown.any? %>
+          <% max_amount = monthly_breakdown.values.map { |v| [v[:ins].abs, v[:outs].abs].max }.max %>
+          <div class="space-y-4 mt-4">
+            <% monthly_breakdown.each do |month, data| %>
+              <div class="border-b border-base-300 pb-4 last:border-b-0 last:pb-0">
+                <div class="flex items-center gap-2 mb-3">
+                  <h3 class="text-sm font-semibold text-base-content">
+                    <%= month.strftime("%B %Y") %>
+                  </h3>
+                  <span class="text-xs text-base-content/60">
+                    (<%= pluralize(data[:count], 'transaction') %>)
+                  </span>
+                </div>
+                
+                <div class="space-y-2">
+                  <!-- Income (Ins) -->
+                  <div class="flex items-center gap-3">
+                    <div class="w-16 text-xs text-base-content/70 flex-shrink-0">
+                      Income
+                    </div>
+                    <div class="flex-1 relative h-6 bg-base-300 rounded overflow-hidden">
+                      <div 
+                        class="h-full bg-success rounded transition-all duration-500"
+                        style="width: <%= max_amount > 0 ? (data[:ins].abs / max_amount * 100) : 0 %>%"
+                      ></div>
+                    </div>
+                    <div class="w-24 text-right flex-shrink-0">
+                      <span class="text-xs font-semibold text-success">
+                        <%= number_to_currency(data[:ins], unit: "€") %>
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <!-- Expenses (Outs) -->
+                  <div class="flex items-center gap-3">
+                    <div class="w-16 text-xs text-base-content/70 flex-shrink-0">
+                      Expenses
+                    </div>
+                    <div class="flex-1 relative h-6 bg-base-300 rounded overflow-hidden">
+                      <div 
+                        class="h-full bg-error rounded transition-all duration-500"
+                        style="width: <%= max_amount > 0 ? (data[:outs].abs / max_amount * 100) : 0 %>%"
+                      ></div>
+                    </div>
+                    <div class="w-24 text-right flex-shrink-0">
+                      <span class="text-xs font-semibold text-error">
+                        <%= number_to_currency(data[:outs], unit: "€") %>
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <!-- Net -->
+                  <% net = data[:ins] + data[:outs] %>
+                  <div class="flex items-center gap-3 pt-1 border-t border-base-300">
+                    <div class="w-16 text-xs text-base-content/70 flex-shrink-0">
+                      Net
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="w-24 text-right flex-shrink-0">
+                      <span class="text-xs font-semibold <%= net >= 0 ? 'text-success' : 'text-error' %>">
+                        <%= number_to_currency(net, unit: "€") %>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-base-content/60 italic">No transactions yet</p>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>

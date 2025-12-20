@@ -1,5 +1,5 @@
-<div class="card bg-primary/10 border border-primary/20">
-  <div class="card-body">
+<div class="card bg-primary/10 border border-primary/20 p-4">
+  <div class="card-body p-0">
     <h2 class="card-title text-primary">Add New Transaction</h2>
     <div data-controller="form-reset">
       <%= form_with model: new_transaction, data: { action: "turbo:submit-end->form-reset#clear" }, class: "space-y-2" do |f| %>

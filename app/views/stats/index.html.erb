@@ -1,6 +1,7 @@
 <%= turbo_stream_from current_user, :cashflow_detail %>
 
-<div class="p-4">
-  <%= render "transactions/cashflow_detail", user: current_user %>
+<div class="p-4 flex flex-col gap-4">
+  <div>
+    <%= render "transactions/cashflow_detail", user: current_user %>
+  </div>
 </div>
-

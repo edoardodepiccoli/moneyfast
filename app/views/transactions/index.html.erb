@@ -1,7 +1,9 @@
 <%= turbo_stream_from current_user, :transactions_compact %>
 
-<div class="p-4 space-y-4">
-  <%= render "transactions/form", new_transaction: @new_transaction %>
+<div class="p-4 flex flex-col gap-4">
+  <div>
+    <%= render "transactions/form", new_transaction: @new_transaction %>
+  </div>
 
   <div class="flex items-center gap-2">
     <p class="text-sm text-base-content/60">Want to import or export your transactions?</p>

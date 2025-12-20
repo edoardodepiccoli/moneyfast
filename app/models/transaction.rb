@@ -16,13 +16,11 @@ class Transaction < ApplicationRecord
     broadcast_replace_later_to [ user, :transactions ]
     broadcast_replace_later_to [ user, :transactions_compact ], partial: "transactions/transaction_compact"
     broadcast_replace_later_to [ user, :cashflow_summary ], partial: "transactions/cashflow_summary", locals: { user: user }, target: "cashflow_card"
-    broadcast_replace_later_to [ user, :cashflow_detail ], partial: "transactions/cashflow_detail", locals: { user: user }, target: "cashflow_card"
   }
   after_destroy_commit -> {
     broadcast_remove_to [ user, :transactions ]
     broadcast_remove_to [ user, :transactions_compact ]
     broadcast_replace_to [ user, :cashflow_summary ], partial: "transactions/cashflow_summary", locals: { user: user }, target: "cashflow_card"
-    broadcast_replace_to [ user, :cashflow_detail ], partial: "transactions/cashflow_detail", locals: { user: user }, target: "cashflow_card"
   }
 
   scope :recent, -> { order(date: :desc) }

@@ -1,6 +1,6 @@
 <%= turbo_frame_tag dom_id(transaction) do %>
-  <div class="card <%= transaction.pending? ? 'bg-warning/10 border border-warning/30' : 'bg-base-200 border border-base-300' %>">
-    <div class="card-body p-4">
+  <div class="card <%= transaction.pending? ? 'bg-warning/10 border border-warning/30' : 'bg-base-200 border border-base-300' %> p-4">
+    <div class="card-body p-0">
       <% if transaction.pending? %>
         <div class="flex items-center gap-3">
           <span class="loading loading-spinner loading-sm text-warning"></span>
