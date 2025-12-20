@@ -1,8 +1,5 @@
 <% 
-  months = local_assigns[:months] || 6
-  cutoff_date = (months - 1).months.ago.beginning_of_month
-  
-  processed_transactions = user.transactions.processed.where("date >= ?", cutoff_date)
+  processed_transactions = user.transactions.processed
   monthly_cashflow = processed_transactions
     .group_by { |t| t.date.beginning_of_month }
     .transform_values { |transactions| transactions.sum(&:amount) }
@@ -23,6 +20,7 @@
     .to_h
   
   total_cashflow = processed_transactions.sum(&:amount)
+  current_month = Date.current.beginning_of_month
 %>
 
 <%= turbo_frame_tag "cashflow_card" do %>
@@ -43,9 +41,10 @@
           <div class="space-y-3 mt-4">
             <% monthly_cashflow.each do |month, amount| %>
               <% month_data = monthly_breakdown[month] %>
+              <% is_future_month = month > current_month %>
               <div class="flex flex-col gap-1 border-b border-base-300 pb-2">
                 <div class="flex items-center gap-3">
-                  <div class="w-20 text-xs text-base-content/70 flex-shrink-0">
+                  <div class="w-20 text-xs <%= is_future_month ? 'text-warning' : 'text-base-content/70' %> flex-shrink-0">
                     <%= month.strftime("%b %Y") %>
                   </div>
                   <div class="flex-1 relative h-8 bg-base-300 rounded overflow-hidden">
