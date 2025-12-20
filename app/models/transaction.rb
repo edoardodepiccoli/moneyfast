@@ -13,15 +13,10 @@ class Transaction < ApplicationRecord
   }
   after_update_commit -> {
     broadcast_replace_later_to [ user, :transactions ]
-    # Update cashflow whenever a processed transaction is updated
-    if processed?
-      broadcast_replace_later_to [ user, :cashflow ], partial: "transactions/cashflow", locals: { user: user }, target: "cashflow_card"
-    end
+    broadcast_replace_later_to [ user, :cashflow ], partial: "transactions/cashflow", locals: { user: user }, target: "cashflow_card"
   }
   after_destroy_commit -> {
     broadcast_remove_to [ user, :transactions ]
-    # Always update cashflow on destroy - the calculation only includes processed transactions anyway
-    # Use synchronous broadcast to ensure it happens immediately
     broadcast_replace_to [ user, :cashflow ], partial: "transactions/cashflow", locals: { user: user }, target: "cashflow_card"
   }
 
