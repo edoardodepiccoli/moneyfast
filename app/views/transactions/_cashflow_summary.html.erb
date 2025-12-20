@@ -1,21 +1,74 @@
 <% 
   processed_transactions = user.transactions.processed
-  total_cashflow = processed_transactions.sum(&:amount)
+  today = Date.today
+  
+  # Separate current and future transactions
+  current_transactions = processed_transactions.where("date <= ?", today)
+  future_transactions = processed_transactions.where("date > ?", today)
+  
+  # Calculate totals
+  total_net_worth = current_transactions.sum(&:amount)
+  future_expenses = future_transactions.select { |t| t.amount < 0 }.sum(&:amount)
+  future_income = future_transactions.select { |t| t.amount > 0 }.sum(&:amount)
+  future_total = future_transactions.sum(&:amount)
+  
+  # Usable net worth = current net worth + future expenses (negative) + future income (positive)
+  # Since future_expenses is already negative, adding it reduces usable net worth
+  usable_net_worth = total_net_worth + future_expenses + future_income
 %>
 
 <%= turbo_frame_tag "cashflow_card" do %>
 <div class="card bg-base-200 border border-base-300 p-4">
   <div class="card-body p-0">
-    <div class="flex flex-row items-baseline gap-2">
+    <div class="flex flex-row items-baseline gap-2 mb-4">
       <h2 class="card-title text-base-content">Net Worth</h2>
-      <p class="text-sm text-base-content/60">(Total Cashflow)</p>
     </div>
     
-    <div>
-      <div class="flex items-baseline gap-2">
-        <span class="text-3xl font-bold <%= total_cashflow >= 0 ? 'text-success' : 'text-error' %>">
-          <%= number_to_currency(total_cashflow, unit: "€") %>
-        </span>
+    <div class="space-y-4">
+      <!-- Usable Net Worth (Primary Display) -->
+      <div>
+        <div class="flex items-baseline gap-2 mb-1">
+          <span class="text-3xl font-bold <%= usable_net_worth >= 0 ? 'text-success' : 'text-error' %>">
+            <%= number_to_currency(usable_net_worth, unit: "€") %>
+          </span>
+        </div>
+        <p class="text-xs text-base-content/60">Usable Net Worth</p>
+      </div>
+      
+      <!-- Breakdown -->
+      <div class="border-t border-base-300 pt-3 space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-base-content/70">Total Net Worth</span>
+          <span class="text-sm font-semibold <%= total_net_worth >= 0 ? 'text-success' : 'text-error' %>">
+            <%= number_to_currency(total_net_worth, unit: "€") %>
+          </span>
+        </div>
+        
+        <% if future_transactions.any? %>
+          <% if future_expenses < 0 %>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-base-content/70">Future Expenses</span>
+              <span class="text-sm font-semibold text-error">
+                <%= number_to_currency(future_expenses, unit: "€") %>
+              </span>
+            </div>
+          <% end %>
+          <% if future_income > 0 %>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-base-content/70">Future Income</span>
+              <span class="text-sm font-semibold text-success">
+                +<%= number_to_currency(future_income, unit: "€") %>
+              </span>
+            </div>
+          <% end %>
+          <div class="text-xs text-base-content/50 italic">
+            <%= pluralize(future_transactions.count, 'transaction') %> scheduled
+          </div>
+        <% else %>
+          <div class="text-xs text-base-content/50 italic">
+            No future transactions
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
