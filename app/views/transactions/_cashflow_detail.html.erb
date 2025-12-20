@@ -15,7 +15,7 @@
   <div class="card-body">
     <h2 class="card-title text-base-content">Cashflow Overview</h2>
     
-    <div class="mt-4">
+    <div>
       <div class="flex items-baseline gap-2 mb-6">
         <span class="text-3xl font-bold <%= total_cashflow >= 0 ? 'text-success' : 'text-error' %>">
           <%= number_to_currency(total_cashflow, unit: "€") %>

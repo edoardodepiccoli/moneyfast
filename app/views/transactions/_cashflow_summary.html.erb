@@ -1,5 +1,6 @@
 <% 
   processed_transactions = user.transactions.processed
+  total_months = processed_transactions.group_by { |t| t.date.beginning_of_month }.count
   total_cashflow = processed_transactions.sum(&:amount)
 %>
 
@@ -8,12 +9,15 @@
   <div class="card-body">
     <h2 class="card-title text-base-content">Total Cashflow</h2>
     
-    <div class="mt-4">
+    <div>
       <div class="flex items-baseline gap-2">
         <span class="text-3xl font-bold <%= total_cashflow >= 0 ? 'text-success' : 'text-error' %>">
           <%= number_to_currency(total_cashflow, unit: "€") %>
         </span>
       </div>
+      <% if total_months > 0 %>
+        <div class="text-sm text-base-content/60">Avg. Monthly Cashflow: <%= number_to_currency(total_cashflow / total_months, unit: "€") %></div>
+      <% end %>
     </div>
   </div>
 </div>
