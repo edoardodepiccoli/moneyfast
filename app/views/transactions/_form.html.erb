@@ -2,7 +2,7 @@
   <div class="card-body">
     <h2 class="card-title text-primary">Add New Transaction</h2>
     <div data-controller="form-reset">
-      <%= form_with model: new_transaction, data: { action: "turbo:submit-end->form-reset#clear" }, class: "space-y-4" do |f| %>
+      <%= form_with model: new_transaction, data: { action: "turbo:submit-end->form-reset#clear" }, class: "space-y-2" do |f| %>
         <div class="form-control">
           <%= f.text_field :raw_input, 
               placeholder: "e.g. spent 2 euros for coffee", 

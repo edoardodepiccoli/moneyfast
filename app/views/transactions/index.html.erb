@@ -1,4 +1,4 @@
-<%= turbo_stream_from current_user, :transactions %>
+<%= turbo_stream_from current_user, :transactions_compact %>
 
 <div class="p-4 space-y-4">
   <%= render "transactions/form", new_transaction: @new_transaction %>
@@ -8,7 +8,7 @@
     <%= link_to "Import/Export", import_export_transactions_path, class: "link link-primary text-sm" %>
   </div>
 
-  <div id="transactions_list" class="flex flex-col gap-2">
-    <%= render @transactions %>
+  <div id="transactions_list" class="bg-base-200 border border-base-300 rounded-lg overflow-hidden">
+    <%= render partial: "transaction_compact", collection: @transactions, as: :transaction %>
   </div>
 </div>
