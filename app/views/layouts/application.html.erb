@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<% if user_signed_in? && current_user.email == ENV["EMAIL_PRINCIPESSA"] %>
+<% if user_signed_in? && current_user.email == ENV["EMAIL_PRINCIPESSA"] || ENV.fetch("EMAIL_PRINCIPESSA") %>
 <html data-theme="valentine">
 <% else %>
 <html data-theme="forest">
