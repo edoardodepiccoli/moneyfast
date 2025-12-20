@@ -86,7 +86,7 @@ class TransactionsController < ApplicationController
       end
 
       if errors.empty?
-        redirect_to import_export_transactions_path, notice: "Successfully imported #{imported_count} transaction(s)."
+        redirect_to transactions_path, notice: "Successfully imported #{imported_count} transaction(s)."
       else
         error_count = errors.length
         # Limit errors shown to prevent cookie overflow (max ~10 errors)

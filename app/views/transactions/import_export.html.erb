@@ -4,10 +4,17 @@
       <h2 class="card-title text-primary">Import Transactions</h2>
       
       <div class="space-y-4">
-        <div class="text-xs text-base-content/70 space-y-1">
-          <p>CSV format: <code class="text-xs bg-base-200 px-1 rounded">date,amount,description</code></p>
-          <p class="text-xs">
-            Example: <code class="bg-base-200 px-1 rounded">2024-01-15,25.50,Coffee shop</code>
+        <div class="text-sm text-base-content/70 space-y-3">
+          <p>
+            Your CSV file should contain three columns: date (in YYYY-MM-DD format), amount (as a decimal number), and description (text).<br><br>The first row should contain the column headers, and each subsequent row represents a transaction.
+          </p>
+          <p>Example CSV file:<br>
+            <code class="text-xs bg-base-200 rounded">
+              date,amount,description<br>
+              2024-01-15,25.50,Coffee shop<br>
+              2024-01-20,-150.00,Groceries<br>
+              2024-01-25,5400.00,Salary<br>
+            </code>
           </p>
         </div>
 
