@@ -1,0 +1,17 @@
+<div class="card bg-primary/10 border border-primary/20">
+  <div class="card-body">
+    <h2 class="card-title text-primary">Add New Transaction</h2>
+    <div data-controller="form-reset">
+      <%= form_with model: new_transaction, data: { action: "turbo:submit-end->form-reset#clear" }, class: "space-y-4" do |f| %>
+        <div class="form-control">
+          <%= f.text_field :raw_input, 
+              placeholder: "e.g. spent 2 euros for coffee", 
+              class: "input input-bordered w-full",
+              autocomplete: "off" %>
+        </div>
+        <%= f.submit "Add Transaction", class: "btn btn-primary w-full" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+

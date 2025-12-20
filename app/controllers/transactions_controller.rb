@@ -1,11 +1,7 @@
 class TransactionsController < ApplicationController
   before_action :authenticate_user!
   def index
-    all_transactions = current_user.transactions.recent
-    @total_count = all_transactions.count
-    @show_all = params[:show_all].present?
-
-    @transactions = @show_all ? all_transactions : all_transactions.limit(10)
+    @transactions = current_user.transactions.recent
     @new_transaction = current_user.transactions.build
   end
 
