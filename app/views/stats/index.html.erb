@@ -1,7 +1,29 @@
 <%= turbo_stream_from current_user, :cashflow_detail %>
 
-<div class="p-4 flex flex-col gap-4">
-  <div>
-    <%= render "transactions/cashflow_detail", user: current_user %>
+<div class="flex flex-col gap-4 mt-4">
+  <div class="px-4">
+    <%= render "transactions/cashflow_summary", user: current_user %>
   </div>
+
+  <div class="px-4 flex flex-col gap-4">
+    <div class="flex justify-between items-center px-4 mt-8">
+      <h1 class="text-2xl font-bold">Statistics</h1>
+      <%= form_with url: stats_path, method: :get, local: true, class: "flex items-center gap-2" do |f| %>
+        <label for="months" class="text-sm text-base-content/70">Months:</label>
+        <%= f.select :months, 
+            options_for_select([["3 months", 3], ["6 months", 6], ["12 months", 12], ["18 months", 18], ["24 months", 24]], @months),
+            {},
+            { 
+              id: "months",
+              class: "select select-bordered select-sm",
+              onchange: "this.form.submit()"
+            } %>
+      <% end %>
+    </div>
+    
+    <div>
+      <%= render "transactions/cashflow_detail", user: current_user, months: @months %>
+    </div>
+  </div>
+
 </div>
