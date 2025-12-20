@@ -9,38 +9,38 @@
       'bg-base-200 border border-base-300'
     end
   %>
-  <div class="card <%= card_classes %> p-4">
+  <div class="card <%= card_classes %> p-3">
     <div class="card-body p-0">
       <% if transaction.pending? %>
-        <div class="flex items-center gap-3">
-          <span class="loading loading-spinner loading-sm text-warning"></span>
+        <div class="flex items-center gap-2">
+          <span class="loading loading-spinner loading-xs text-warning"></span>
           <div class="flex-1">
-            <p class="text-sm italic text-base-content/70">
+            <p class="text-xs italic text-base-content/70">
               Processing: "<%= transaction.raw_input %>"...
             </p>
           </div>
         </div>
       <% else %>
-        <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center justify-between gap-3">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-3 mb-1">
-              <span class="text-2xl font-bold <%= transaction.amount < 0 ? 'text-error' : 'text-success' %>">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-xl font-bold <%= transaction.amount < 0 ? 'text-error' : 'text-success' %>">
                 <%= number_to_currency(transaction.amount, unit: "€") %>
               </span>
             </div>
-            <p class="text-base font-medium text-base-content break-words">
+            <p class="text-sm font-medium text-base-content break-words">
               <%= transaction.description %>
             </p>
-            <p class="text-sm text-base-content/60">
+            <p class="text-xs text-base-content/60">
               <%= transaction.date.strftime("%A %-d %B %Y") %>
             </p>
           </div>
           <div class="flex-shrink-0">
             <%= button_to transaction_path(transaction), 
                 method: :delete, 
-                class: "btn btn-sm btn-error btn-circle",
+                class: "btn btn-xs btn-error btn-circle",
                 title: "Delete transaction" do %>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             <% end %>
