@@ -1,0 +1,44 @@
+<div class="p-4 space-y-6">
+  <div class="card bg-primary/10 border border-primary/20">
+    <div class="card-body">
+      <h2 class="card-title text-primary">Import Transactions</h2>
+      
+      <div class="space-y-4">
+        <div class="text-xs text-base-content/70 space-y-1">
+          <p>CSV format: <code class="text-xs bg-base-200 px-1 rounded">date,amount,description</code></p>
+          <p class="text-xs">
+            Example: <code class="bg-base-200 px-1 rounded">2024-01-15,25.50,Coffee shop</code>
+          </p>
+        </div>
+
+        <%= form_with url: import_transactions_path, method: :post, multipart: true, class: "space-y-4" do |f| %>
+          <div class="form-control">
+            <%= f.file_field :csv_file, 
+                accept: ".csv,text/csv",
+                class: "file-input file-input-bordered file-input-primary w-full",
+                required: true %>
+          </div>
+          <%= f.submit "Import Transactions", class: "btn btn-primary w-full" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-success/10 border border-success/20">
+    <div class="card-body">
+      <h2 class="card-title text-success">Export Transactions</h2>
+      
+      <div class="space-y-4">
+        <%= link_to export_transactions_path(format: :csv), 
+            class: "btn btn-success w-full",
+            data: { turbo: false } do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Download CSV
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+

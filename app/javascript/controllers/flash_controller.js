@@ -14,7 +14,7 @@ export default class extends Controller {
 
       setTimeout(() => {
         this.dismiss(message)
-      }, 1500)
+      }, 3000)
     })
   }
 
