@@ -29,4 +29,14 @@
   <div id="transactions_list" class="flex flex-col gap-2">
     <%= render @transactions %>
   </div>
+
+  <% if @total_count > 10 %>
+    <div class="flex justify-center mt-4">
+      <% if @show_all %>
+        <%= link_to "Show Less", transactions_path, class: "btn btn-outline btn-sm" %>
+      <% else %>
+        <%= link_to "View All (#{@total_count} transactions)", transactions_path(show_all: true), class: "btn btn-outline btn-sm" %>
+      <% end %>
+    </div>
+  <% end %>
 </div>
