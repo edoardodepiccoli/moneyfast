@@ -8,3 +8,16 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+.turbo-progress-bar {
+    height: 3px;
+    /* thin but visible */
+    background-color: #007bff;
+    /* pick brand color */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    z-index: 9999;
+    transition: width 0.2s ease;
+}
