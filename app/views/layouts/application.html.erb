@@ -8,18 +8,26 @@
     <title><%= content_for(:title) || "Moneyfast" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Moneyfast">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+    <%# PWA Manifest %>
+    <%= tag.link rel: "manifest", href: pwa_manifest_path %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <%# Favicons %>
+    <%= favicon_link_tag "favicon.ico", rel: "icon", type: "image/x-icon" %>
+    <%= favicon_link_tag "icon.svg", rel: "icon", type: "image/svg+xml" %>
+    <%= favicon_link_tag "icon.png", rel: "icon", type: "image/png" %>
+
+    <%# Apple Touch Icons for iOS Safari PWA %>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -28,11 +36,6 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
-
-    <%= favicon_link_tag "favicon.ico", rel: "icon", type: "image/x-icon" %>
-    <%= favicon_link_tag "icon.svg", rel: "icon", type: "image/svg+xml" %>
-    <%= favicon_link_tag "icon.png", rel: "apple-touch-icon", type: "image/png" %>
-    <%= tag.link rel: "manifest", href: pwa_manifest_path %>
   </head>
 
   <body>
