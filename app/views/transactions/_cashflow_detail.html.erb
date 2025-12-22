@@ -113,13 +113,13 @@
                 <div class="font-semibold <%= average_cashflow >= 0 ? 'text-success' : 'text-error' %>">
                   <%= number_to_currency(average_cashflow, unit: "€") %>
                 </div>
-                <div class="mt-1 text-[0.7rem] text-base-content/60 space-x-2">
-                  <span class="text-success">
+                <div class="mt-1 text-[0.8rem] text-base-content/60 grid grid-cols-2 gap-2">
+                  <div class="text-success">
                     In: <%= number_to_currency(average_ins, unit: "€") %>
-                  </span>
-                  <span class="text-error">
-                    Out: <%= number_to_currency(average_outs, unit: "€") %>
-                  </span>
+                  </div>
+                  <div class="text-error">
+                    Out: <%= number_to_currency(average_outs.abs, unit: "€") %>
+                  </div>
                 </div>
               </div>
               <div>
