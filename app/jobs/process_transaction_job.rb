@@ -10,6 +10,7 @@ class ProcessTransactionJob < ApplicationJob
       amount: parsed_data["amount"],
       description: parsed_data["description"],
       date: parsed_data["date"],
+      category: parsed_data["category"],
       status: :processed
     )
   end
