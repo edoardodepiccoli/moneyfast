@@ -42,6 +42,3 @@ builder:
 
 ssh:
   user: root
-
-deploy:
-  migrate: true
