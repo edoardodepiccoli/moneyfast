@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_19_190603) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_22_104751) do
   create_table "transactions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "raw_input", null: false
@@ -20,6 +20,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_19_190603) do
     t.string "description", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "category", default: "undefined", null: false
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
