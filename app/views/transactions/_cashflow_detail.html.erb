@@ -41,6 +41,8 @@
     .to_h
   
   total_cashflow = processed_transactions.sum(&:amount)
+  total_ins_sum = processed_transactions.select { |t| t.amount > 0 }.sum(&:amount)
+  total_outs_sum = processed_transactions.select { |t| t.amount < 0 }.sum(&:amount)
   current_month = Date.current.beginning_of_month
   
   # Calculate averages and trends
@@ -93,61 +95,39 @@
       <h2 class="card-title text-base-content">Cashflow Overview</h2>
       
       <div>
-        <div class="flex items-baseline gap-2 mb-4">
+        <div class="flex items-baseline gap-2 mb-1">
           <span class="text-3xl font-bold <%= total_cashflow >= 0 ? 'text-success' : 'text-error' %>">
             <%= number_to_currency(total_cashflow, unit: "€") %>
           </span>
-          <span class="text-sm text-base-content/60">Total Cashflow</span>
+          <span class="text-xs text-base-content/60">Total Cashflow</span>
+        </div>
+
+        <div class="flex gap-4 text-sm text-base-content/70 mb-6">
+          <span class="text-success font-medium">
+            In: <%= number_to_currency(total_ins_sum, unit: "€") %>
+          </span>
+          <span class="text-error font-medium">
+            Out: -<%= number_to_currency(total_outs_sum.abs, unit: "€") %>
+          </span>
         </div>
 
         <% if monthly_cashflow.any? %>
           <% amounts = monthly_cashflow.values.map(&:abs).sort %>
           <% percentile_index = [(amounts.size * 0.90).ceil - 1, 0].max %>
           <% max_amount = amounts[percentile_index] %>
-          
-          <!-- Summary Section -->
-          <div class="bg-base-300/50 rounded-lg p-3 mb-4 border border-base-300">
-            <div class="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <div class="text-xs text-base-content/60 mb-1">Average Monthly</div>
-                <div class="font-semibold <%= average_cashflow >= 0 ? 'text-success' : 'text-error' %>">
-                  <%= number_to_currency(average_cashflow, unit: "€") %>
-                </div>
-                <div class="mt-1 text-[0.8rem] text-base-content/60 grid grid-cols-2 gap-2">
-                  <div class="text-success">
-                    In: <%= number_to_currency(average_ins, unit: "€") %>
-                  </div>
-                  <div class="text-error">
-                    Out: <%= number_to_currency(average_outs.abs, unit: "€") %>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div class="text-xs text-base-content/60 mb-1">Trend</div>
-                <div class="font-semibold <%= overall_trend >= 0 ? 'text-success' : 'text-error' %>">
-                  <% if overall_trend > 0 %>
-                    <span>↑</span>
-                  <% elsif overall_trend < 0 %>
-                    <span>↓</span>
-                  <% else %>
-                    <span>→</span>
-                  <% end %>
-                  <%= overall_trend.abs.round(1) %>%
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- Monthly Breakdown -->
-          <div class="space-y-3">
+          <div class="space-y-4">
             <% monthly_cashflow.each_with_index do |(month, amount), index| %>
               <% month_data = monthly_breakdown[month] %>
               <% is_future_month = month > current_month %>
               <% trend_change = monthly_trends[month] %>
               <% is_above_average = amount > average_cashflow %>
               <% is_below_average = amount < average_cashflow %>
+              <% zebra_class = index.even? ? 'bg-base-300/40' : 'bg-base-100/40' %>
+              <% highlight_class = is_above_average ? 'ring-1 ring-success/50' : (is_below_average ? 'ring-1 ring-error/50' : '') %>
               
-              <div class="flex flex-col gap-2 pb-3 <%= is_above_average ? 'bg-success/5' : (is_below_average ? 'bg-error/5' : '') %> rounded px-2 py-2">
+              <div class="flex flex-col gap-2 pb-3 rounded px-3 py-3 border border-base-300 shadow-sm <%= zebra_class %> <%= highlight_class %>">
                 <!-- Row 1: Month name, Amount, and Trend (mobile-friendly) -->
                 <div class="flex items-center justify-between gap-2 flex-wrap">
                   <div class="text-sm font-medium <%= is_future_month ? 'text-warning' : 'text-base-content' %>">
@@ -200,7 +180,7 @@
                   <% total_ins_for_month = month_data[:ins].to_f %>
                   <% total_outs_for_month = month_data[:outs].to_f %>
                   <% if ins_by_category.any? || outs_by_category.any? %>
-                    <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div class="mt-2 grid grid-cols-1 gap-3 text-xs">
                       <div>
                         <div class="font-semibold text-base-content/70 mb-1">Income categories</div>
                         <% if ins_by_category.any? %>
