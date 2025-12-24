@@ -2,37 +2,38 @@
   <% 
     is_scheduled = transaction.processed? && transaction.date > Date.today
   %>
-  <div class="[&:last-child]:border-b-0">
+  <div>
     <% if transaction.pending? %>
-      <div class="flex items-center gap-2 border-b border-base-300 py-2 px-3">
-        <span class="loading loading-spinner loading-xs text-warning"></span>
-        <p class="text-sm italic text-base-content/70">
+      <div class="d-flex align-items-center gap-2 border-bottom py-2 px-3">
+        <div class="spinner-border spinner-border-sm text-warning" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted small fst-italic mb-0">
           Processing: "<%= transaction.raw_input %>"...
         </p>
       </div>
     <% else %>
-      <div class="flex items-center gap-4 border-b <%= is_scheduled ? 'border-warning/40' : 'border-base-content/30' %> py-2 px-3 <%= is_scheduled ? 'bg-warning/30' : '' %>">
-        <div class="flex-shrink-0 w-24">
-          <div class="text-sm font-semibold <%= transaction.amount < 0 ? 'text-error' : 'text-success' %>">
+      <div class="d-flex align-items-center gap-3 border-bottom py-2 px-3 <%= is_scheduled ? 'bg-warning bg-opacity-25' : '' %>">
+        <div class="flex-shrink-0" style="width: 90px;">
+          <div class="small fw-semibold <%= transaction.amount < 0 ? 'text-danger' : 'text-success' %>">
             <%= number_to_currency(transaction.amount, unit: "€") %>
           </div>
-          <div class="text-xs text-base-content/60 mt-1">
+          <div class="text-muted" style="font-size: 0.7rem;">
             <%= transaction.date.strftime("%-d %b %Y") %>
           </div>
         </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-xs text-base-content break-words">
-            <span class="text-base-content/60"><%= transaction.category %></span>: <%= transaction.description %>
+        <div class="flex-grow-1 min-w-0">
+          <p class="small mb-0 text-break">
+            <span class="text-muted"><%= transaction.category %></span>: <%= transaction.description %>
           </p>
         </div>
         <div class="flex-shrink-0">
           <%= button_to transaction_path(transaction), 
               method: :delete, 
-              class: "btn btn-xs btn-error btn-circle",
+              class: "btn btn-sm btn-danger rounded-circle p-1 d-flex align-items-center justify-content-center",
+              style: "width: 24px; height: 24px;",
               title: "Delete transaction" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <i class="bi bi-x" style="font-size: 0.7rem;"></i>
           <% end %>
         </div>
       </div>

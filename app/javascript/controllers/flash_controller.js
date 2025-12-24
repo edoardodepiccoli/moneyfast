@@ -8,21 +8,21 @@ export default class extends Controller {
     this.messageTargets.forEach(message => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          message.classList.remove("translate-y-full")
+          message.style.transform = "translateY(0)"
         })
       })
 
       setTimeout(() => {
         this.dismiss(message)
-      }, 2000)
+      }, 3000)
     })
   }
 
   dismiss(message) {
-    message.classList.add("translate-y-full")
+    message.style.transform = "translateY(100%)"
 
     setTimeout(() => {
       message.remove()
-    }, 100)
+    }, 300)
   }
 }

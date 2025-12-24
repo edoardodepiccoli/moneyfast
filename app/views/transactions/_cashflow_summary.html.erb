@@ -8,54 +8,52 @@
 %>
 
 <%= turbo_frame_tag "cashflow_card" do %>
-<div class="card bg-base-200 border border-base-300 p-4">
-  <div class="card-body p-0">
-    <div class="flex flex-row items-baseline gap-2 mb-4">
-      <h2 class="card-title text-base-content">Net Worth</h2>
-    </div>
+<div class="card bg-light border mb-3">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Net Worth</h5>
     
-    <div class="space-y-4">
+    <div class="d-flex flex-column gap-3">
       <!-- Usable Net Worth (Primary Display) -->
       <div>
-        <div class="flex items-baseline gap-2 mb-1">
-          <span class="text-3xl font-bold <%= usable_net_worth >= 0 ? 'text-success' : 'text-error' %>">
+        <div class="d-flex align-items-baseline gap-2 mb-1">
+          <span class="display-6 fw-bold <%= usable_net_worth >= 0 ? 'text-success' : 'text-danger' %>">
             <%= number_to_currency(usable_net_worth, unit: "€") %>
           </span>
         </div>
-        <p class="text-xs text-base-content/60">Usable Net Worth</p>
+        <p class="text-muted small mb-0">Usable Net Worth</p>
       </div>
       
       <!-- Breakdown -->
-      <div class="border-t border-base-300 pt-3 space-y-1">
-        <div class="flex justify-between items-center">
-          <span class="text-sm text-base-content/70">Total Net Worth</span>
-          <span class="text-sm font-semibold <%= total_net_worth >= 0 ? 'text-success' : 'text-error' %>">
+      <div class="border-top pt-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small">Total Net Worth</span>
+          <span class="small fw-semibold <%= total_net_worth >= 0 ? 'text-success' : 'text-danger' %>">
             <%= number_to_currency(total_net_worth, unit: "€") %>
           </span>
         </div>
         
         <% if future_transactions_count > 0 %>
           <% if future_expenses < 0 %>
-            <div class="flex justify-between items-center">
-              <span class="text-sm text-base-content/70">Future Expenses</span>
-              <span class="text-sm font-semibold text-error">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small">Future Expenses</span>
+              <span class="small fw-semibold text-danger">
                 <%= number_to_currency(future_expenses, unit: "€") %>
               </span>
             </div>
           <% end %>
           <% if future_income > 0 %>
-            <div class="flex justify-between items-center">
-              <span class="text-sm text-base-content/70">Future Income</span>
-              <span class="text-sm font-semibold text-success">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small">Future Income</span>
+              <span class="small fw-semibold text-success">
                 +<%= number_to_currency(future_income, unit: "€") %>
               </span>
             </div>
           <% end %>
-          <div class="text-xs text-base-content/50 italic">
+          <div class="text-muted" style="font-size: 0.7rem;">
             <%= pluralize(future_transactions_count, 'transaction') %> scheduled
           </div>
         <% else %>
-          <div class="text-xs text-base-content/50 italic">
+          <div class="text-muted" style="font-size: 0.7rem;">
             No future transactions
           </div>
         <% end %>

@@ -12,23 +12,23 @@
 %>
 
 <%= turbo_frame_tag "cashflow_card" do %>
-  <div class="card bg-base-200 p-4">
-    <div class="card-body p-0">
-      <h2 class="card-title text-base-content">Cashflow Overview</h2>
+  <div class="card bg-light mb-3">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Cashflow Overview</h5>
       
       <div>
-        <div class="flex items-baseline gap-2 mb-1">
-          <span class="text-3xl font-bold <%= total_cashflow >= 0 ? 'text-success' : 'text-error' %>">
+        <div class="d-flex align-items-baseline gap-2 mb-1">
+          <span class="display-6 fw-bold <%= total_cashflow >= 0 ? 'text-success' : 'text-danger' %>">
             <%= number_to_currency(total_cashflow, unit: "€") %>
           </span>
-          <span class="text-xs text-base-content/60">Total Cashflow</span>
+          <span class="text-muted" style="font-size: 0.7rem;">Total Cashflow</span>
         </div>
 
-        <div class="flex gap-4 text-sm text-base-content/70 mb-6">
-          <span class="text-success font-medium">
+        <div class="d-flex gap-4 small mb-4">
+          <span class="text-success fw-medium">
             In: <%= number_to_currency(total_ins_sum, unit: "€") %>
           </span>
-          <span class="text-error font-medium">
+          <span class="text-danger fw-medium">
             Out: -<%= number_to_currency(total_outs_sum.abs, unit: "€") %>
           </span>
         </div>
@@ -36,25 +36,24 @@
         <% if monthly_cashflow.any? %>
 
           <!-- Monthly Breakdown -->
-          <div class="space-y-0">
+          <div>
             <% monthly_cashflow.each_with_index do |(month, amount), index| %>
               <% month_data = monthly_breakdown[month] %>
               <% is_future_month = month > current_month %>
               <% trend_change = monthly_trends[month] %>
               <% is_above_average = amount > average_cashflow %>
               <% is_below_average = amount < average_cashflow %>
-              <% zebra_class = index.even? ? 'bg-base-300' : 'bg-base-100' %>
-              <% highlight_class = '' %>
+              <% zebra_class = index.even? ? 'bg-secondary bg-opacity-10' : 'bg-white' %>
               
-              <div class="flex flex-col gap-2 pb-3 px-3 py-3 border-0 <%= zebra_class %> <%= highlight_class %>">
+              <div class="d-flex flex-column gap-2 p-3 <%= zebra_class %>">
                 <!-- Row 1: Month name, Amount, and Trend (mobile-friendly) -->
-                <div class="flex items-center justify-between gap-2 flex-wrap">
-                  <div class="text-sm font-medium <%= is_future_month ? 'text-warning' : 'text-base-content' %>">
+                <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                  <div class="small fw-medium <%= is_future_month ? 'text-warning' : '' %>">
                     <%= month.strftime("%b %Y") %>
                   </div>
-                  <div class="flex items-center gap-2">
+                  <div class="d-flex align-items-center gap-2">
                     <% if trend_change %>
-                      <span class="text-xs <%= trend_change >= 0 ? 'text-success' : 'text-error' %> whitespace-nowrap">
+                      <span class="text-nowrap <%= trend_change >= 0 ? 'text-success' : 'text-danger' %>" style="font-size: 0.7rem;">
                         <% if trend_change > 0 %>
                           ↑
                         <% elsif trend_change < 0 %>
@@ -63,31 +62,31 @@
                         <%= trend_change.abs.round(1) %>%
                       </span>
                     <% end %>
-                    <span class="text-sm font-semibold <%= amount >= 0 ? 'text-success' : 'text-error' %> whitespace-nowrap">
+                    <span class="small fw-semibold text-nowrap <%= amount >= 0 ? 'text-success' : 'text-danger' %>">
                       <%= number_to_currency(amount, unit: "€") %>
                     </span>
                   </div>
                 </div>
                 
                 <!-- Row 2: Bar chart (full width on mobile) -->
-                <div class="relative h-6 bg-base-300 rounded overflow-hidden">
+                <div class="position-relative" style="height: 24px; background-color: #dee2e6; border-radius: 0.25rem; overflow: hidden;">
                   <div 
-                    class="h-full <%= amount >= 0 ? 'bg-success' : 'bg-error' %> rounded transition-all duration-500"
-                    style="width: <%= max_amount > 0 ? (amount.abs / max_amount * 100) : 0 %>%"
+                    class="h-100 <%= amount >= 0 ? 'bg-success' : 'bg-danger' %> rounded transition-all"
+                    style="width: <%= max_amount > 0 ? (amount.abs / max_amount * 100) : 0 %>%; transition-duration: 0.5s;"
                   ></div>
                 </div>
                 
                 <!-- Row 3: Ins/Outs breakdown -->
                 <% if month_data %>
-                  <div class="flex items-center gap-3 flex-wrap text-xs">
+                  <div class="d-flex align-items-center gap-3 flex-wrap" style="font-size: 0.7rem;">
                     <span class="text-success">
                       +<%= number_to_currency(month_data[:ins], unit: "€") %>
                     </span>
-                    <span class="text-error">
+                    <span class="text-danger">
                       <%= number_to_currency(month_data[:outs], unit: "€") %>
                     </span>
                     <% if month_data[:count] %>
-                      <span class="text-base-content/50">
+                      <span class="text-muted">
                         (<%= pluralize(month_data[:count], 'transaction') %>)
                       </span>
                     <% end %>
@@ -99,47 +98,47 @@
                   <% total_ins_for_month = month_data[:ins].to_f %>
                   <% total_outs_for_month = month_data[:outs].to_f %>
                   <% if ins_by_category.any? || outs_by_category.any? %>
-                    <div class="mt-2 grid grid-cols-1 gap-3 text-xs">
-                      <div>
-                        <div class="font-semibold text-base-content/70 mb-1">Income categories</div>
+                    <div class="mt-2 row g-3" style="font-size: 0.7rem;">
+                      <div class="col-12">
+                        <div class="fw-semibold text-muted mb-1">Income categories</div>
                         <% if ins_by_category.any? %>
-                          <ul class="space-y-0.5">
+                          <ul class="list-unstyled mb-0">
                             <% ins_by_category.each do |category, amount_in| %>
                               <% percentage = total_ins_for_month != 0 ? ((amount_in / total_ins_for_month.abs) * 100).round(1) : 0 %>
-                              <li class="flex justify-between gap-2">
-                                <span class="truncate">
+                              <li class="d-flex justify-content-between gap-2 mb-1">
+                                <span class="text-truncate">
                                   <%= category.presence || "Uncategorized" %>
-                                  <span class="text-base-content/40">(<%= percentage %>%)</span>
+                                  <span class="text-muted">(<%= percentage %>%)</span>
                                 </span>
-                                <span class="text-success whitespace-nowrap">
+                                <span class="text-success text-nowrap">
                                   +<%= number_to_currency(amount_in, unit: "€") %>
                                 </span>
                               </li>
                             <% end %>
                           </ul>
                         <% else %>
-                          <div class="text-base-content/40 italic">No income</div>
+                          <div class="text-muted fst-italic">No income</div>
                         <% end %>
                       </div>
-                      <div>
-                        <div class="font-semibold text-base-content/70 mb-1">Outcome categories</div>
+                      <div class="col-12">
+                        <div class="fw-semibold text-muted mb-1">Outcome categories</div>
                         <% if outs_by_category.any? %>
-                          <ul class="space-y-0.5">
+                          <ul class="list-unstyled mb-0">
                             <% outs_by_category.each do |category, amount_out| %>
                               <% percentage = total_outs_for_month != 0 ? ((amount_out.abs / total_outs_for_month.abs) * 100).round(1) : 0 %>
-                              <li class="flex justify-between gap-2">
-                                <span class="truncate">
+                              <li class="d-flex justify-content-between gap-2 mb-1">
+                                <span class="text-truncate">
                                   <%= category.presence || "Uncategorized" %>
-                                  <span class="text-base-content/40">(<%= percentage %>%)</span>
+                                  <span class="text-muted">(<%= percentage %>%)</span>
                                 </span>
-                                <span class="text-error whitespace-nowrap">
+                                <span class="text-danger text-nowrap">
                                   <%= number_to_currency(amount_out, unit: "€") %>
                                 </span>
                               </li>
                             <% end %>
                           </ul>
                         <% else %>
-                          <div class="text-base-content/40 italic">No outcome</div>
+                          <div class="text-muted fst-italic">No outcome</div>
                         <% end %>
                       </div>
                     </div>
@@ -149,10 +148,9 @@
             <% end %>
           </div>
         <% else %>
-          <p class="text-sm text-base-content/60 italic">No transactions yet</p>
+          <p class="small text-muted fst-italic mb-0">No transactions yet</p>
         <% end %>
       </div>
     </div>
   </div>
 <% end %>
-
