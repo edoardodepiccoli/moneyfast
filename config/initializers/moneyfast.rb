@@ -29,10 +29,6 @@ module Moneyfast
     adjustment
   ].freeze
 
-  # CSV Import/Export
-  MAX_ERRORS_TO_SHOW = 10
-  MAX_FILE_SIZE = 10.megabytes
-
   # Dashboard
   DASHBOARD_TRANSACTION_LIMIT = 10
 end

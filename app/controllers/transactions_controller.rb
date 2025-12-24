@@ -27,30 +27,6 @@ class TransactionsController < ApplicationController
     end
   end
 
-  def import_export
-    @transactions = current_user.transactions.recent
-
-    render :import_export
-  end
-
-  def import
-    result = CsvImportService.new(current_user, params[:csv_file]).call
-
-    if result.success?
-      redirect_to transactions_path, notice: result.error_message
-    else
-      redirect_to import_export_transactions_path, alert: result.error_message
-    end
-  end
-
-  def export
-    service = CsvExportService.new(current_user)
-    send_data service.generate,
-      filename: service.filename,
-      type: "text/csv",
-      disposition: "attachment"
-  end
-
   private
 
   def transaction_params

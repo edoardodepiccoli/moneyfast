@@ -5,11 +5,6 @@
     <%= render "transactions/form", new_transaction: @new_transaction %>
   </div>
 
-  <div class="flex items-center gap-2">
-    <p class="text-sm text-base-content/60">Want to import or export your transactions?</p>
-    <%= link_to "Import/Export", import_export_transactions_path, class: "link link-primary text-sm" %>
-  </div>
-
   <div id="transactions_list" class="bg-base-200 border border-base-300 rounded-lg overflow-hidden">
     <%= render partial: "transaction_compact", collection: @transactions, as: :transaction %>
   </div>
