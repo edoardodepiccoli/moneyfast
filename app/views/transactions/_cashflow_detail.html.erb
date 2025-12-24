@@ -36,17 +36,17 @@
         <% if monthly_cashflow.any? %>
 
           <!-- Monthly Breakdown -->
-          <div class="space-y-4">
+          <div class="space-y-0">
             <% monthly_cashflow.each_with_index do |(month, amount), index| %>
               <% month_data = monthly_breakdown[month] %>
               <% is_future_month = month > current_month %>
               <% trend_change = monthly_trends[month] %>
               <% is_above_average = amount > average_cashflow %>
               <% is_below_average = amount < average_cashflow %>
-              <% zebra_class = index.even? ? 'bg-base-300/40' : 'bg-base-100/40' %>
-              <% highlight_class = is_above_average ? 'ring-1 ring-success/50' : (is_below_average ? 'ring-1 ring-error/50' : '') %>
+              <% zebra_class = index.even? ? 'bg-base-300' : 'bg-base-100' %>
+              <% highlight_class = '' %>
               
-              <div class="flex flex-col gap-2 pb-3 rounded px-3 py-3 border border-base-300 shadow-sm <%= zebra_class %> <%= highlight_class %>">
+              <div class="flex flex-col gap-2 pb-3 px-3 py-3 border-0 <%= zebra_class %> <%= highlight_class %>">
                 <!-- Row 1: Month name, Amount, and Trend (mobile-friendly) -->
                 <div class="flex items-center justify-between gap-2 flex-wrap">
                   <div class="text-sm font-medium <%= is_future_month ? 'text-warning' : 'text-base-content' %>">
