@@ -2,7 +2,7 @@
 <% if user_signed_in? && ENV["EMAIL_PRINCIPESSA"].present? && current_user.email == ENV["EMAIL_PRINCIPESSA"] %>
 <html data-theme="valentine">
 <% else %>
-<html data-theme="forest">
+<html data-theme="light">
 <% end %>
   <head>
     <title><%= content_for(:title) || "Moneyfast" %></title>
