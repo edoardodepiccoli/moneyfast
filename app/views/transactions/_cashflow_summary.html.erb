@@ -1,20 +1,10 @@
 <% 
-  processed_transactions = user.transactions.processed
-  today = Date.today
-  
-  # Separate current and future transactions
-  current_transactions = processed_transactions.where("date <= ?", today)
-  future_transactions = processed_transactions.where("date > ?", today)
-  
-  # Calculate totals
-  total_net_worth = current_transactions.sum(&:amount)
-  future_expenses = future_transactions.select { |t| t.amount < 0 }.sum(&:amount)
-  future_income = future_transactions.select { |t| t.amount > 0 }.sum(&:amount)
-  future_total = future_transactions.sum(&:amount)
-  
-  # Usable net worth = current net worth + future expenses (negative) + future income (positive)
-  # Since future_expenses is already negative, adding it reduces usable net worth
-  usable_net_worth = total_net_worth + future_expenses + future_income
+  summary = CashflowCalculationService.new(user).summary
+  total_net_worth = summary[:total_net_worth]
+  future_expenses = summary[:future_expenses]
+  future_income = summary[:future_income]
+  usable_net_worth = summary[:usable_net_worth]
+  future_transactions_count = summary[:future_transactions_count]
 %>
 
 <%= turbo_frame_tag "cashflow_card" do %>
@@ -44,7 +34,7 @@
           </span>
         </div>
         
-        <% if future_transactions.any? %>
+        <% if future_transactions_count > 0 %>
           <% if future_expenses < 0 %>
             <div class="flex justify-between items-center">
               <span class="text-sm text-base-content/70">Future Expenses</span>
@@ -62,7 +52,7 @@
             </div>
           <% end %>
           <div class="text-xs text-base-content/50 italic">
-            <%= pluralize(future_transactions.count, 'transaction') %> scheduled
+            <%= pluralize(future_transactions_count, 'transaction') %> scheduled
           </div>
         <% else %>
           <div class="text-xs text-base-content/50 italic">

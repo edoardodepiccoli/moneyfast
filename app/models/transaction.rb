@@ -24,4 +24,26 @@ class Transaction < ApplicationRecord
   }
 
   scope :recent, -> { order(date: :desc) }
+  scope :processed, -> { where(status: :processed) }
+  scope :pending, -> { where(status: :pending) }
+  scope :failed, -> { where(status: :failed) }
+  scope :by_date_range, ->(start_date, end_date) { where(date: start_date..end_date) }
+  scope :income, -> { where("amount > 0") }
+  scope :expenses, -> { where("amount < 0") }
+  scope :by_category, ->(category) { where(category: category) }
+  scope :current_month, -> { where(date: Date.current.beginning_of_month..Date.current.end_of_month) }
+  scope :future, -> { where("date > ?", Date.today) }
+  scope :past, -> { where("date <= ?", Date.today) }
+
+  def income?
+    amount&.positive?
+  end
+
+  def expense?
+    amount&.negative?
+  end
+
+  def scheduled?
+    processed? && date.present? && date > Date.today
+  end
 end

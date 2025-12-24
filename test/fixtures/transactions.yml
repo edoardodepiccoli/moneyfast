@@ -1,11 +1,31 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+one:
+  user: one
+  raw_input: "spent 50 euros for groceries"
+  status: processed
+  amount: -50.00
+  date: <%= 5.days.ago.to_date %>
+  description: "groceries"
+  category: food
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+two:
+  user: one
+  raw_input: "received 2000 euros salary"
+  status: processed
+  amount: 2000.00
+  date: <%= 1.day.ago.to_date %>
+  description: "salary"
+  category: salary
+
+three:
+  user: one
+  raw_input: "coffee shop"
+  status: pending
+
+four:
+  user: two
+  raw_input: "bought books"
+  status: processed
+  amount: -30.00
+  date: <%= Date.today %>
+  description: "books"
+  category: education

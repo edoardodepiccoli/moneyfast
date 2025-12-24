@@ -1,92 +1,14 @@
 <% 
-  processed_transactions = user.transactions.processed
-  monthly_cashflow = processed_transactions
-    .group_by { |t| t.date.beginning_of_month }
-    .transform_values { |transactions| transactions.sum(&:amount) }
-    .sort_by { |month, _| month }
-    .reverse
-    .to_h
-  
-  monthly_breakdown = processed_transactions
-    .group_by { |t| t.date.beginning_of_month }
-    .transform_values do |transactions|
-      ins_transactions = transactions.select { |t| t.amount > 0 }
-      outs_transactions = transactions.select { |t| t.amount < 0 }
-
-      ins_total = ins_transactions.sum(&:amount)
-      outs_total = outs_transactions.sum(&:amount)
-
-      ins_by_category = ins_transactions
-        .group_by(&:category)
-        .transform_values { |txs| txs.sum(&:amount) }
-        .sort_by { |_, amount| -amount }
-        .to_h
-
-      outs_by_category = outs_transactions
-        .group_by(&:category)
-        .transform_values { |txs| txs.sum(&:amount) }
-        .sort_by { |_, amount| amount } # most negative first
-        .to_h
-
-      {
-        ins: ins_total,
-        outs: outs_total,
-        count: transactions.size,
-        ins_by_category: ins_by_category,
-        outs_by_category: outs_by_category
-      }
-    end
-    .sort_by { |month, _| month }
-    .reverse
-    .to_h
-  
-  total_cashflow = processed_transactions.sum(&:amount)
-  total_ins_sum = processed_transactions.select { |t| t.amount > 0 }.sum(&:amount)
-  total_outs_sum = processed_transactions.select { |t| t.amount < 0 }.sum(&:amount)
+  detail = CashflowCalculationService.new(user).detail
+  total_cashflow = detail[:total_cashflow]
+  total_ins_sum = detail[:total_ins]
+  total_outs_sum = detail[:total_outs]
+  monthly_cashflow = detail[:monthly_cashflow]
+  monthly_breakdown = detail[:monthly_breakdown]
+  average_cashflow = detail[:average_cashflow]
+  monthly_trends = detail[:monthly_trends]
+  max_amount = detail[:max_amount_for_chart]
   current_month = Date.current.beginning_of_month
-  
-  # Calculate averages and trends
-  average_cashflow = monthly_cashflow.any? ? (monthly_cashflow.values.sum.to_f / monthly_cashflow.size) : 0
-
-  if monthly_breakdown.any?
-    months_count = monthly_breakdown.size
-    total_ins = monthly_breakdown.values.sum { |data| data[:ins] }
-    total_outs = monthly_breakdown.values.sum { |data| data[:outs] }
-
-    average_ins = total_ins.to_f / months_count
-    average_outs = total_outs.to_f / months_count
-  else
-    average_ins = 0
-    average_outs = 0
-  end
-  
-  # Calculate month-over-month changes
-  monthly_trends = {}
-  monthly_cashflow_array = monthly_cashflow.to_a
-  monthly_cashflow_array.each_with_index do |(month, amount), index|
-    if index < monthly_cashflow_array.size - 1
-      previous_amount = monthly_cashflow_array[index + 1][1]
-      if previous_amount != 0
-        change = ((amount - previous_amount) / previous_amount.abs) * 100
-        monthly_trends[month] = change
-      else
-        monthly_trends[month] = amount > 0 ? 100 : (amount < 0 ? -100 : 0)
-      end
-    end
-  end
-  
-  # Calculate overall trend (comparing last 3 months to previous 3 months)
-  if monthly_cashflow_array.size >= 6
-    recent_3_months = monthly_cashflow_array[0..2].map { |_, amount| amount }.sum
-    previous_3_months = monthly_cashflow_array[3..5].map { |_, amount| amount }.sum
-    overall_trend = previous_3_months != 0 ? ((recent_3_months - previous_3_months) / previous_3_months.abs) * 100 : 0
-  elsif monthly_cashflow_array.size >= 2
-    recent_avg = monthly_cashflow_array[0..[1, monthly_cashflow_array.size - 1].min].map { |_, amount| amount }.sum.to_f / [2, monthly_cashflow_array.size].min
-    previous_avg = monthly_cashflow_array[[2, monthly_cashflow_array.size - 1].min..-1].map { |_, amount| amount }.sum.to_f / [monthly_cashflow_array.size - 2, 1].max
-    overall_trend = previous_avg != 0 ? ((recent_avg - previous_avg) / previous_avg.abs) * 100 : 0
-  else
-    overall_trend = 0
-  end
 %>
 
 <%= turbo_frame_tag "cashflow_card" do %>
@@ -112,9 +34,6 @@
         </div>
 
         <% if monthly_cashflow.any? %>
-          <% amounts = monthly_cashflow.values.map(&:abs).sort %>
-          <% percentile_index = [(amounts.size * 0.90).ceil - 1, 0].max %>
-          <% max_amount = amounts[percentile_index] %>
 
           <!-- Monthly Breakdown -->
           <div class="space-y-4">
