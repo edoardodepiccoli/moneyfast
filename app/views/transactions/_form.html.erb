@@ -1,16 +1,54 @@
-<div class="card bg-primary/10 border border-primary/20 p-4">
+<div class="card bg-primary/10 border border-primary/20 p-4" data-controller="voice-recorder" data-voice-recorder-transcribe-url-value="<%= transcribe_audio_transactions_path %>">
   <div class="card-body p-0">
     <h2 class="card-title text-primary">Add New Transaction</h2>
-    <div data-controller="form-reset">
+    
+    <div data-voice-recorder-target="errorMessage" class="alert alert-error mt-2 hidden"></div>
+    
+    <div data-voice-recorder-target="form" data-controller="form-reset">
       <%= form_with model: new_transaction, data: { action: "turbo:submit-end->form-reset#clear" }, class: "space-y-2" do |f| %>
         <div class="form-control">
-          <%= f.text_field :raw_input, 
-              placeholder: "e.g. spent 2 euros for coffee", 
-              class: "input input-bordered w-full",
-              autocomplete: "off" %>
+          <div class="flex gap-2">
+            <%= f.text_field :raw_input, 
+                placeholder: "e.g. spent 2 euros for coffee", 
+                class: "input input-bordered flex-1",
+                autocomplete: "off",
+                data: { voice_recorder_target: "inputField" } %>
+            <button 
+              type="button" 
+              class="btn btn-primary" 
+              data-voice-recorder-target="micButton"
+              data-action="click->voice-recorder#startRecording"
+              title="Record voice transaction">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+              </svg>
+            </button>
+          </div>
         </div>
         <%= f.submit "Add Transaction", class: "btn btn-primary w-full" %>
       <% end %>
+    </div>
+
+    <div data-voice-recorder-target="visualizer" class="hidden space-y-4">
+      <div class="flex flex-col items-center gap-4">
+        <div class="text-center">
+          <p class="text-sm text-base-content/70 mb-2">Recording...</p>
+          <p class="text-lg font-semibold" data-voice-recorder-target="timer">0:00</p>
+        </div>
+        <canvas 
+          data-voice-recorder-target="canvas" 
+          width="400" 
+          height="100"
+          class="w-full max-w-md border border-base-300 rounded-lg bg-white">
+        </canvas>
+        <button 
+          type="button" 
+          class="btn btn-error"
+          data-voice-recorder-target="stopButton"
+          data-action="click->voice-recorder#stopRecording">
+          Stop Recording
+        </button>
+      </div>
     </div>
   </div>
 </div>

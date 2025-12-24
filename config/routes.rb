@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       get :import_export
       post :import
       get :export
+      post :transcribe_audio
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
